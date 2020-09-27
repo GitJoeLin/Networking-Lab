@@ -19,6 +19,7 @@ public class ChatServer {
     public static final int PORT = 54321;
     private static final ArrayList<ClientConnectionData> clientList = new ArrayList<>();
 
+
     public static void main(String[] args) throws Exception{
         ExecutorService pool = Executors.newFixedThreadPool(100);
         try (ServerSocket serverSocket = new ServerSocket(PORT)){
@@ -35,12 +36,7 @@ public class ChatServer {
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                     String name = socket.getInetAddress().getHostName();
-
                     ClientConnectionData client = new ClientConnectionData(socket, in, out, name);
-                    synchronized (clientList) {
-                        clientList.add(client);
-                    }
-                    System.out.println("added client " + name);
 
                     //handle client business in another thread
                     pool.execute(new ServerClientHandler(client, clientList));
