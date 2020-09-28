@@ -1,4 +1,4 @@
-package day5_bca;
+package NetworkingLab;
 
 import java.io.BufferedReader;
 import java.net.Socket;
