@@ -1,4 +1,4 @@
-package day5_bca;
+package NetworkingLab;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,6 +11,8 @@ import java.net.SocketException;
 import java.nio.Buffer;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,9 +20,16 @@ import java.util.concurrent.Executors;
 public class ChatServer {
     public static final int PORT = 54321;
     private static final ArrayList<ClientConnectionData> clientList = new ArrayList<>();
+    private static List<String> words = Arrays.asList("plough", "passenger", "basketball", "instrument", "competition", "knowledge", "quicksand", "amusements"
+            , "observation", "crocodile", "hippopotamus", "librarian", "maintenance", "appointment", "establishment", "psychology"
+            , "enthusiasm", "chinchilla", "dormouse", "basilisk", "orangutan", "wolverine", "platypus", "armadillo", "reindeer"
+            , "hamburger", "macaroni", "spearmint", "oregano", "mushroom", "marshmallow", "strawberry", "potato", "spaghetti", "honeydew"
+            , "cantaloupe", "grapefruit", "watermelon", "sandwich", "helicopter", "houseplant", "aquarium", "magnetism", "emergency");
+    public static final ArrayList<String> cookie_words = new ArrayList<>();
 
 
     public static void main(String[] args) throws Exception{
+        cookie_words.addAll(words);
         ExecutorService pool = Executors.newFixedThreadPool(100);
         try (ServerSocket serverSocket = new ServerSocket(PORT)){
             System.out.println("Chat Server started.");
