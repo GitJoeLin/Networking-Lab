@@ -1,4 +1,4 @@
-package day5_bca;
+package NetworkingLab;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class ServerClientHandler implements Runnable{
     // Maintain data about the client serviced by this thread
-    ClientConnectionData client;
-    final ArrayList<ClientConnectionData> clientList;
-    ArrayList<String> userNames = new ArrayList<>();
+    private ClientConnectionData client;
+    private final ArrayList<ClientConnectionData> clientList;
+    private ArrayList<String> userNames = new ArrayList<>();
 
     public ServerClientHandler(ClientConnectionData client, ArrayList<ClientConnectionData> clientList){
         this.client = client;
@@ -52,7 +52,7 @@ public class ServerClientHandler implements Runnable{
                 else if (userName.startsWith("* ")){
                     userName = userName.substring(2);
                     synchronized (clientList){
-                        if(userNames.size()!=0) {
+                        if(userNames.size()!= 0) {
                             if (!userNames.contains(userName) && validName(userName)) {
                                 client.setUserName(userName);
                                 clientList.add(client);
@@ -91,8 +91,8 @@ public class ServerClientHandler implements Runnable{
                 else if(incoming.startsWith("@")){
                     if(incoming.contains("* ")) {
                         int namePrivate = incoming.indexOf("*");
-                        String name = incoming.substring(1, namePrivate-1);
-                        String chat = incoming.substring(namePrivate+2).trim();
+                        String name = incoming.substring(1, namePrivate - 1);
+                        String chat = incoming.substring(namePrivate + 2).trim();
                         if (userNames.contains(name)) {
                             String msg = String.format("PCHAT%s %s (private): %s", name, client.getUserName(), chat);
                             broadcast(msg);
