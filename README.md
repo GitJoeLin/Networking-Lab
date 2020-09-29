@@ -1,5 +1,7 @@
 # Networking-Lab
 
+This program will allow you to connect to a server and interact with other users connected to the same server
+
 First Step: Enter server IP Address
 
 Second Step: Enter server port number
