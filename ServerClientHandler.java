@@ -1,4 +1,4 @@
-package day5_bca;
+package NetworkingLab;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,7 +7,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
 
 public class ServerClientHandler implements Runnable{
     // Maintain data about the client serviced by this thread
@@ -21,7 +20,9 @@ public class ServerClientHandler implements Runnable{
             , "hamburger", "macaroni", "spearmint", "oregano", "mushroom", "marshmallow", "strawberry", "potato", "spaghetti", "honeydew"
             , "cantaloupe", "grapefruit", "watermelon", "sandwich", "helicopter", "houseplant", "aquarium", "magnetism", "emergency");
     String currentWord;
-    Timer timer = new Timer();
+
+    private int cookieCounter = 0;
+    private int randNum;
 
     public ServerClientHandler(ClientConnectionData client, ArrayList<ClientConnectionData> clientList){
         this.client = client;
@@ -94,9 +95,9 @@ public class ServerClientHandler implements Runnable{
             }
 
 
-
-            String incoming = "";
             cookieGiver();
+            String incoming = "";
+
             while ( (incoming = in.readLine()) != null) {
                 // handle messages
                 if(incoming.startsWith("* ")){
@@ -105,6 +106,12 @@ public class ServerClientHandler implements Runnable{
                         String msg = String.format("CHAT %s: %s", client.getUserName(), chat);
                         // broadcast the message out
                         broadcast(msg);
+                        cookieCounter++;
+                        randNum = (int) ((Math.random() * 5) + 5);
+                        if(cookieCounter >= randNum){
+                            cookieCounter -= randNum;
+                            cookieGiver();
+                        }
                     }
                 }
                 else if(incoming.startsWith("@")){
@@ -115,6 +122,12 @@ public class ServerClientHandler implements Runnable{
                         if (userNames.contains(name)) {
                             String msg = String.format("PCHAT%s %s (private): %s", name, client.getUserName(), chat);
                             broadcast(msg);
+                            cookieCounter++;
+                            randNum = (int) ((Math.random() * 5) + 5);
+                            if(cookieCounter >= randNum){
+                                cookieCounter -= randNum;
+                                cookieGiver();
+                            }
                         }
                     }
                 }
@@ -129,8 +142,12 @@ public class ServerClientHandler implements Runnable{
                             broadcast(client.getUserName() + " has " + client.getCookies() + " cookie!");
                         }
                         broadcast(client.getUserName() + " has " + client.getCookies() + " cookies!");
+
                         cookie = false;
-                        cookieGiver();
+                        if(cookieCounter >= 10){
+                            cookieCounter -= 10;
+                            cookieGiver();
+                        }
                     }
                 }
                 else if(incoming.startsWith("QUIT")){
