@@ -10,6 +10,7 @@ public class ClientConnectionData {
     private PrintWriter out;
     private String name;
     private String userName;
+    private int cookies;
 
     public ClientConnectionData(Socket socket, BufferedReader input, PrintWriter out, String name) {
         this.socket = socket;
@@ -17,6 +18,7 @@ public class ClientConnectionData {
         this.out = out;
         this.name = name;
         this.userName = userName;
+        this.cookies = 0;
     }
 
     public Socket getSocket() {
@@ -57,6 +59,13 @@ public class ClientConnectionData {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+    public int getCookies() {
+        return cookies;
+    }
+
+    public void setCookies(int cookies) {
+        this.cookies = cookies;
     }
 
 }
