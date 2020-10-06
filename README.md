@@ -6,11 +6,11 @@ First Step: Enter server IP Address
 
 Second Step: Enter server port number
 
-Third Step: When asked to enter a name, enter a valid name with characters ranging from a-z, A-Z, and 0-9 after first typing an asterisk character, followed by a space, and then your name
+Third Step: When asked to enter a name, enter a valid name with characters ranging from a-z, A-Z, and 0-9, and press enter. If you enter an invalid name you will be asked to enter your name again.
 
 Fourth Step: After connected to the server you will have access to a range of commands, press ENTER or RETURN on your keyboard to execute each command:
 
-"* " followed by a message of your choice will send that message to every user connected to the server
+If you would like to send a message of your choice to everyone, simply type the message and press enter. That will send that message to every user connected to the server.
 
 "@ " followed by a name of a user connected to the server, followed by a space, and then you message to that user, will send your message so that it is only visible to that user
 
