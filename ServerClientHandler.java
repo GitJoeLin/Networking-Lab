@@ -1,4 +1,4 @@
-package NetworkingLab;
+package day5_bca;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -69,8 +69,7 @@ public class ServerClientHandler implements Runnable{
                 if(userName == null){
                     return;
                 }
-                else if (userName.startsWith("* ")){
-                    userName = userName.substring(2);
+                else {
                     synchronized (clientList){
                         if(userNames.size()!=0) {
                             if (!userNames.contains(userName) && validName(userName)) {
@@ -100,25 +99,11 @@ public class ServerClientHandler implements Runnable{
 
             while ( (incoming = in.readLine()) != null) {
                 // handle messages
-                if(incoming.startsWith("* ")){
-                    String chat = incoming.substring(2).trim();
-                    if(chat.length() > 0) {
-                        String msg = String.format("CHAT %s: %s", client.getUserName(), chat);
-                        // broadcast the message out
-                        broadcast(msg);
-                        cookieCounter++;
-                        randNum = (int) ((Math.random() * 5) + 5);
-                        if(cookieCounter >= randNum){
-                            cookieCounter -= randNum;
-                            cookieGiver();
-                        }
-                    }
-                }
-                else if(incoming.startsWith("@")){
-                    if(incoming.contains("* ")) {
-                        int namePrivate = incoming.indexOf("*");
-                        String name = incoming.substring(1, namePrivate-1);
-                        String chat = incoming.substring(namePrivate+2).trim();
+                if(incoming.startsWith("@")){
+                    if(incoming.contains(" ")) {
+                        int namePrivate = incoming.indexOf(" ");
+                        String name = incoming.substring(1, namePrivate);
+                        String chat = incoming.substring(namePrivate+1).trim();
                         if (userNames.contains(name)) {
                             String msg = String.format("PCHAT%s %s (private): %s", name, client.getUserName(), chat);
                             broadcast(msg);
@@ -129,6 +114,9 @@ public class ServerClientHandler implements Runnable{
                                 cookieGiver();
                             }
                         }
+                    }
+                    else{
+                        cookieCounter++;
                     }
                 }
                 else if(incoming.startsWith("#")){
@@ -152,6 +140,20 @@ public class ServerClientHandler implements Runnable{
                 }
                 else if(incoming.startsWith("QUIT")){
                     break;
+                }
+                else{
+                    String text = incoming;
+                    if(text.length() > 0) {
+                        String msg = String.format("CHAT %s: %s", client.getUserName(), text);
+                        // broadcast the message out
+                        broadcast(msg);
+                        cookieCounter++;
+                        randNum = (int) ((Math.random() * 5) + 5);
+                        if(cookieCounter >= randNum){
+                            cookieCounter -= randNum;
+                            cookieGiver();
+                        }
+                    }
                 }
             }
         } catch (Exception ex){
