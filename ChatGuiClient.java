@@ -253,7 +253,16 @@ public class ChatGuiClient extends Application {
                     || name.get().trim().contains("#") || name.get().trim().contains("$")
                     || name.get().trim().contains("%") || name.get().trim().contains("^")
                     || name.get().trim().contains("&") || name.get().trim().contains("*")
-                    || name.get().trim().contains("(") || name.get().trim().contains(")")){
+                    || name.get().trim().contains("(") || name.get().trim().contains(")")
+                    || name.get().trim().contains("~") || name.get().trim().contains("`")
+                    || name.get().trim().contains("-") || name.get().trim().contains("_")
+                    || name.get().trim().contains("+") || name.get().trim().contains("=")
+                    || name.get().trim().contains("[") || name.get().trim().contains("]")
+                    || name.get().trim().contains("{") || name.get().trim().contains("}")
+                    || name.get().trim().contains("\\") || name.get().trim().contains("|")
+                    || name.get().trim().contains(",") || name.get().trim().contains(".")
+                    || name.get().trim().contains("<") || name.get().trim().contains(">")
+                    || name.get().trim().contains("/") || name.get().trim().contains("?")){
                 nameDialog.setHeaderText("The name must have no special characters: ");
             }
             else
