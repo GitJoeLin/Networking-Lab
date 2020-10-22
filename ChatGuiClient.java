@@ -140,7 +140,7 @@ public class ChatGuiClient extends Application {
         HBox.setHgrow(textInput, Priority.ALWAYS);
         borderPane.setBottom(hbox);
 
-        Scene scene = new Scene(borderPane, 600, 700);
+        Scene scene = new Scene(borderPane, 500, 700);
         stage.setTitle("Chat Client");
         stage.setScene(scene);
         stage.show();
