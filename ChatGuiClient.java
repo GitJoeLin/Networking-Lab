@@ -170,7 +170,6 @@ public class ChatGuiClient extends Application {
             return;
         textInput.clear();
         out.println(message);
-
     }
 
     private Optional<ServerInfo> getServerIpAndPort() {
@@ -250,6 +249,13 @@ public class ChatGuiClient extends Application {
                 nameDialog.setHeaderText("You must enter a nonempty name: ");
             else if (name.get().trim().contains(" "))
                 nameDialog.setHeaderText("The name must have no spaces: ");
+            else if (name.get().trim().contains("!") || name.get().trim().contains("@")
+                    || name.get().trim().contains("#") || name.get().trim().contains("$")
+                    || name.get().trim().contains("%") || name.get().trim().contains("^")
+                    || name.get().trim().contains("&") || name.get().trim().contains("*")
+                    || name.get().trim().contains("(") || name.get().trim().contains(")")){
+                nameDialog.setHeaderText("The name must have no special characters: ");
+            }
             else
                 username = name.get().trim();
         }
@@ -309,6 +315,15 @@ public class ChatGuiClient extends Application {
                         Platform.runLater(() -> {
                             messageArea.appendText(user + ": " + msg + "\n");
                         });
+                    }
+                    else if(incoming.startsWith("PCHAT"+username)){
+                        int posname = incoming.indexOf(":");
+                        if(!(incoming.substring(6, posname).equals(username))){
+                            String msg = incoming.substring(6+username.length());
+                            Platform.runLater(() -> {
+                                messageArea.appendText(msg);
+                            });
+                        }
                     }
                     else if(incoming.startsWith("NAMES")){
                         int posname = incoming.indexOf(" ");

@@ -77,6 +77,18 @@ public class ServerClientHandler implements Runnable{
                                 clientList.add(client);
                                 userNames.add(client.getUserName());
                                 broadcast(String.format("WELCOME %s", client.getUserName()));
+                                StringBuilder sb = new StringBuilder();
+                                for(int i = 0; i < userNames.size(); i++){
+                                    if(i == userNames.size() - 1){
+                                        sb.append(userNames.get(i));
+                                    }
+                                    else{
+                                        sb.append(userNames.get(i));
+                                        sb.append(", ");
+                                    }
+                                }
+                                String msg = String.format("NAMES %s", sb.toString());
+                                broadcast(msg);
                                 break;
                             }
                         }
@@ -86,6 +98,18 @@ public class ServerClientHandler implements Runnable{
                                 clientList.add(client);
                                 userNames.add(client.getUserName());
                                 broadcast(String.format("WELCOME %s", client.getUserName()));
+                                StringBuilder sb = new StringBuilder();
+                                for(int i = 0; i < userNames.size(); i++){
+                                    if(i == userNames.size() - 1){
+                                        sb.append(userNames.get(i));
+                                    }
+                                    else{
+                                        sb.append(userNames.get(i));
+                                        sb.append(", ");
+                                    }
+                                }
+                                String msg = String.format("NAMES %s", sb.toString());
+                                broadcast(msg);
                                 break;
                             }
                         }
