@@ -140,7 +140,7 @@ public class ServerClientHandler implements Runnable{
                         }
                     }
                 }
-                else if((incoming.trim()).startsWith("/whoishere")){
+                else if(incoming.startsWith("/whoishere")){
                     StringBuilder sb = new StringBuilder();
                     for(int i = 0; i < userNames.size(); i++){
                         if(i == userNames.size() - 1){
@@ -154,11 +154,11 @@ public class ServerClientHandler implements Runnable{
                     String msg = String.format("NAMES %s", sb.toString());
                     broadcast(msg);
                 }
-                else if(incoming.startsWith("QUIT")){
+                else if(incoming.startsWith("EXIT")){
                     break;
                 }
                 else{
-                    String text = incoming.substring(5);
+                    String text = incoming;
                     if(text.length() > 0) {
                         String msg = String.format("CHAT %s %s", client.getUserName(), text);
                         // broadcast the message out

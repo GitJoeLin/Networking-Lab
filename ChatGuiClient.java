@@ -157,17 +157,7 @@ public class ChatGuiClient extends Application {
     }
 
     private void displayNames(){
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < userNames.size(); i++){
-            if(i == userNames.size() - 1){
-                sb.append(userNames.get(i));
-            }
-            else{
-                sb.append(userNames.get(i));
-                sb.append(", ");
-            }
-        }
-        out.println(String.format("NAMES %s", sb.toString()));
+        out.println("/whoishere");
     }
 
     private void quit(){
@@ -179,18 +169,8 @@ public class ChatGuiClient extends Application {
         if (message.length() == 0)
             return;
         textInput.clear();
-        if(message.startsWith("@")){
-            //PCHAT
-        }
-        else if(message.startsWith("#")){
-            //cookies
-        }
-        else if(message.startsWith("/whoishere")){
+        out.println(message);
 
-        }
-        else{
-            out.println("CHAT " + message);
-        }
     }
 
     private Optional<ServerInfo> getServerIpAndPort() {
