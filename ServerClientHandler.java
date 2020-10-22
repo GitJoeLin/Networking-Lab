@@ -1,4 +1,4 @@
-package day5_bca;
+package NetworkingLab;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -97,8 +97,10 @@ public class ServerClientHandler implements Runnable{
             cookieGiver();
             String incoming = "";
 
-            while ( (incoming = in.readLine()) != null) {
+            while ((incoming = in.readLine()) != null) {
                 // handle messages
+                //broadcast(String.format("CHAT %s %s", incoming, incoming));
+
                 if(incoming.startsWith("@")){
                     if(incoming.contains(" ")) {
                         int namePrivate = incoming.indexOf(" ");
@@ -138,13 +140,27 @@ public class ServerClientHandler implements Runnable{
                         }
                     }
                 }
+                else if((incoming.trim()).startsWith("/whoishere")){
+                    StringBuilder sb = new StringBuilder();
+                    for(int i = 0; i < userNames.size(); i++){
+                        if(i == userNames.size() - 1){
+                            sb.append(userNames.get(i));
+                        }
+                        else{
+                            sb.append(userNames.get(i));
+                            sb.append(", ");
+                        }
+                    }
+                    String msg = String.format("NAMES %s", sb.toString());
+                    broadcast(msg);
+                }
                 else if(incoming.startsWith("QUIT")){
                     break;
                 }
                 else{
-                    String text = incoming;
+                    String text = incoming.substring(5);
                     if(text.length() > 0) {
-                        String msg = String.format("CHAT %s: %s", client.getUserName(), text);
+                        String msg = String.format("CHAT %s %s", client.getUserName(), text);
                         // broadcast the message out
                         broadcast(msg);
                         cookieCounter++;
