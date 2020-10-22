@@ -1,4 +1,6 @@
-package day5_bca;
+package NetworkingLab;
+
+import javafx.application.Platform;
 
 import java.io.BufferedReader;
 import java.net.Socket;
@@ -27,8 +29,8 @@ public class ClientServerHandler implements Runnable {
                     System.out.println("Enter your username: ");
                 }
                 else if(incoming.startsWith("WELCOME")){
-                    System.out.println(incoming.substring(8) + " has joined.");
                     userName = incoming.substring(8);
+                    System.out.println(userName + " has joined.");
                 }
                 else if(incoming.startsWith("CHAT")){
                     int posname = incoming.indexOf(":");
@@ -42,7 +44,17 @@ public class ClientServerHandler implements Runnable {
                         System.out.println(incoming.substring(6+userName.length()));
                     }
                 }
-                else if(incoming.startsWith("COOKIE"+userName)){
+                else if(incoming.startsWith("NAMES")){
+                    int posname = incoming.indexOf(" ");
+                    String names = incoming.substring(posname + 1);
+                    System.out.println("All Connected Users: " + names + "\n");
+                }
+                else if(incoming.startsWith("LEADER")){
+                    int posname = incoming.indexOf(" ");
+                    String leaders = incoming.substring(posname + 1);
+                    System.out.println("Leaderboards: \n" + leaders + "\n");
+                }
+                else if(incoming.startsWith("COOKIE" + userName)){
                     int posname = incoming.indexOf(" ");
                     if(!(incoming.substring(7, posname).equals(userName))){
                         System.out.println(incoming.substring(7+userName.length()));

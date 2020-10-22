@@ -146,16 +146,18 @@ public class ServerClientHandler implements Runnable{
                     }
                 }
                 else if(incoming.startsWith("#")){
-                    if(currentWord.equals(incoming.substring(2))){
+                    if(currentWord.equals(incoming.substring(1))){
                         String msg = String.format("COOKIE%s You get a cookie!", client.getUserName());
                         broadcast(msg);
                         int current = client.getCookies();
                         current++;
                         client.setCookies(current);
-                        if(current <=1 ){
+                        if(current == 1 ){
                             broadcast(client.getUserName() + " has " + client.getCookies() + " cookie!");
                         }
-                        broadcast(client.getUserName() + " has " + client.getCookies() + " cookies!");
+                        else {
+                            broadcast(client.getUserName() + " has " + client.getCookies() + " cookies!");
+                        }
 
                         cookie = false;
                         if(cookieCounter >= 10){
@@ -178,7 +180,35 @@ public class ServerClientHandler implements Runnable{
                     String msg = String.format("NAMES %s", sb.toString());
                     broadcast(msg);
                 }
+                else if(incoming.startsWith("/leaderboards")){
+                    StringBuilder sb = new StringBuilder();
+                    for(int i = 0; i < clientList.size(); i++){
+                        if(i == clientList.size() - 1){
+                            sb.append(clientList.get(i).getUserName() + "-");
+                            sb.append(clientList.get(i).getCookies());
+                        }
+                        else{
+                            sb.append(clientList.get(i).getUserName() + "-");
+                            sb.append(clientList.get(i).getCookies());
+                            sb.append(", ");
+                        }
+                    }
+                    String msg = String.format("LEADER %s", sb.toString());
+                    broadcast(msg);
+                }
                 else if(incoming.startsWith("EXIT")){
+                    StringBuilder sb = new StringBuilder();
+                    for(int i = 0; i < userNames.size(); i++){
+                        if(i == userNames.size() - 1){
+                            sb.append(userNames.get(i));
+                        }
+                        else{
+                            sb.append(userNames.get(i));
+                            sb.append(", ");
+                        }
+                    }
+                    String msg = String.format("NAMES %s", sb.toString());
+                    broadcast(msg);
                     break;
                 }
                 else{

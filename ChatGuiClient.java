@@ -79,8 +79,8 @@ public class ChatGuiClient extends Application {
     private Button sendButton;
     private Button quitButton;
     private Button list_namesButton;
+    private Button cookieButton;
 
-    public static String user_list = "";
     ArrayList<String> userNames = new ArrayList<>();
 
     private ServerInfo serverInfo;
@@ -131,13 +131,16 @@ public class ChatGuiClient extends Application {
         list_namesButton = new Button("Show Users");
         list_namesButton.setDisable(false);
         list_namesButton.setOnAction(e -> displayNames());
+        cookieButton = new Button("Leaderboards");
+        cookieButton.setDisable(false);
+        cookieButton.setOnAction(e -> cookie());
 
         HBox hbox = new HBox();
-        hbox.getChildren().addAll(new Label("Message: "), textInput, sendButton, quitButton, list_namesButton);
+        hbox.getChildren().addAll(new Label("Message: "), textInput, sendButton, quitButton, list_namesButton, cookieButton);
         HBox.setHgrow(textInput, Priority.ALWAYS);
         borderPane.setBottom(hbox);
 
-        Scene scene = new Scene(borderPane, 400, 500);
+        Scene scene = new Scene(borderPane, 600, 700);
         stage.setTitle("Chat Client");
         stage.setScene(scene);
         stage.show();
@@ -162,6 +165,10 @@ public class ChatGuiClient extends Application {
 
     private void quit(){
         out.println("EXIT");
+    }
+
+    private void cookie(){
+        out.println("/leaderboards");
     }
 
     private void sendMessage() {
@@ -337,17 +344,35 @@ public class ChatGuiClient extends Application {
                     else if(incoming.startsWith("NAMES")){
                         int posname = incoming.indexOf(" ");
                         String names = incoming.substring(posname + 1);
-                        user_list = names;
                         Platform.runLater(() -> {
                             messageArea.appendText("All Connected Users: " + names + "\n");
                         });
                     }
-                    else if(incoming.startsWith("COOKIE" + username)){
+                    else if(incoming.startsWith("LEADER")){
+                        int posname = incoming.indexOf(" ");
+                        String leaders = incoming.substring(posname + 1);
+                        Platform.runLater(() -> {
+                            messageArea.appendText("Leaderboards: \n" + leaders + "\n");
+                        });
+                    }
+                    else if(incoming.startsWith("Whoever types")){
+                        String finalIncoming1 = incoming;
+                        Platform.runLater(() -> {
+                            messageArea.appendText(finalIncoming1 + "\n");
+                        });
+                    }
+                    else if(incoming.contains("has")){
+                        String finalIncoming2 = incoming;
+                        Platform.runLater(() -> {
+                            messageArea.appendText(finalIncoming2 + "\n");
+                        });
+                    }
+                    else if(incoming.startsWith("COOKIE")){
                         int posname = incoming.indexOf(" ");
                         if(!(incoming.substring(7, posname).equals(username))){
                             String finalIncoming = incoming;
                             Platform.runLater(() -> {
-                                messageArea.appendText(finalIncoming.substring(7+username.length()));
+                                messageArea.appendText(finalIncoming.substring(7 + username.length()) + "\n");
                             });
                             cookie++;
                             if(cookie<=1) {
@@ -365,7 +390,7 @@ public class ChatGuiClient extends Application {
                     else if (incoming.startsWith("EXIT")) {
                         String user = incoming.substring(5);
                         Platform.runLater(() -> {
-                            messageArea.appendText(user + "has left the chatroom.\n");
+                            messageArea.appendText(user + " has left the chatroom.\n");
                         });
                     }
                 }
