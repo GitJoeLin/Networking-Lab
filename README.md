@@ -18,4 +18,4 @@ You will sometimes find a prompt saying that the first to type a word will get a
 
 If you would like to see a list of all connected users, simply type in "/whoishere" or hit the "Show Users" button.
 
-Typing "EXIT" or hitting the "QUIT" button will disconnect you from the server
+Typing "EXIT" or hitting the "Quit" button will disconnect you from the server
