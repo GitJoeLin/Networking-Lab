@@ -1,15 +1,13 @@
-package NetworkingLab;
+package day10_chatgui;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import day5_bca.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -70,8 +68,8 @@ class ServerInfo {
 
 public class ChatGuiClient extends Application {
     private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
     private Stage stage;
     private TextArea messageArea;
@@ -121,26 +119,56 @@ public class ChatGuiClient extends Application {
         //At first, can't send messages - wait for WELCOME!
         textInput = new TextField();
         textInput.setEditable(false);
-        textInput.setOnAction(e -> sendMessage());
+        textInput.setOnAction(e -> {
+            try {
+                sendMessage();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
         sendButton = new Button("Send");
         sendButton.setDisable(true);
-        sendButton.setOnAction(e -> sendMessage());
+        sendButton.setOnAction(e -> {
+            try {
+                sendMessage();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
         quitButton = new Button("Quit");
         quitButton.setDisable(false);
-        quitButton.setOnAction(e -> quit());
+        quitButton.setOnAction(e -> {
+            try {
+                quit();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
         list_namesButton = new Button("Show Users");
         list_namesButton.setDisable(false);
-        list_namesButton.setOnAction(e -> displayNames());
+        list_namesButton.setOnAction(e -> {
+            try {
+                displayNames();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
         cookieButton = new Button("Leaderboards");
         cookieButton.setDisable(false);
-        cookieButton.setOnAction(e -> cookie());
+        cookieButton.setOnAction(e -> {
+            try {
+                cookie();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
 
         HBox hbox = new HBox();
         hbox.getChildren().addAll(new Label("Message: "), textInput, sendButton, quitButton, list_namesButton, cookieButton);
         HBox.setHgrow(textInput, Priority.ALWAYS);
         borderPane.setBottom(hbox);
 
-        Scene scene = new Scene(borderPane, 500, 700);
+        Scene scene = new Scene(borderPane, 600, 600);
         stage.setTitle("Chat Client");
         stage.setScene(scene);
         stage.show();
@@ -149,7 +177,12 @@ public class ChatGuiClient extends Application {
 
         //Handle GUI closed event
         stage.setOnCloseRequest(e -> {
-            out.println("QUIT");
+            try {
+                out.writeObject("QUIT");
+                out.flush();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
             socketListener.appRunning = false;
             try {
                 socket.close();
@@ -159,24 +192,28 @@ public class ChatGuiClient extends Application {
         new Thread(socketListener).start();
     }
 
-    private void displayNames(){
-        out.println("/whoishere");
+    private void displayNames() throws IOException {
+        out.writeObject("/whoishere");
+        out.flush();
     }
 
-    private void quit(){
-        out.println("EXIT");
+    private void quit() throws IOException {
+        out.writeObject("EXIT");
+        out.flush();
     }
 
-    private void cookie(){
-        out.println("/leaderboards");
+    private void cookie() throws IOException {
+        out.writeObject("/leaderboards");
+        out.flush();
     }
 
-    private void sendMessage() {
+    private void sendMessage() throws IOException {
         String message = textInput.getText().trim();
         if (message.length() == 0)
             return;
         textInput.clear();
-        out.println(message);
+        out.writeObject(message);
+        out.flush();
     }
 
     private Optional<ServerInfo> getServerIpAndPort() {
@@ -252,7 +289,10 @@ public class ChatGuiClient extends Application {
 
         while(username.equals("")) {
             Optional<String> name = nameDialog.showAndWait();
-            if (!name.isPresent() || name.get().trim().equals(""))
+            if(userNames.contains(name.get())){
+                nameDialog.setHeaderText("You must enter a unique name: ");
+            }
+            else if (name.isEmpty() || name.get().trim().equals(""))
                 nameDialog.setHeaderText("You must enter a nonempty name: ");
             else if (name.get().trim().contains(" "))
                 nameDialog.setHeaderText("The name must have no spaces: ");
@@ -288,21 +328,26 @@ public class ChatGuiClient extends Application {
             try {
                 // Set up the socket for the Gui
                 socket = new Socket(serverInfo.serverAddress, serverInfo.serverPort);
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new PrintWriter(socket.getOutputStream(), true);
+                in = new ObjectInputStream(socket.getInputStream());
+                out = new ObjectOutputStream(socket.getOutputStream());
 
                 appRunning = true;
                 //Ask the gui to show the username dialog and update username
                 //Send to the server
                 Platform.runLater(() -> {
-                    out.println(getName());
+                    try {
+                        out.writeObject(getName());
+                        out.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 });
 
                 //handle all kinds of incoming messages
-                String incoming = "";
-                while (appRunning && (incoming = in.readLine()) != null) {
-                    if (incoming.startsWith("WELCOME")) {
-                        String user = incoming.substring(8);
+                Message incoming;
+                while (appRunning && (incoming = (Message) in.readObject()) != null) {
+                    if (incoming.getHeader().equals("WELCOME")) {
+                        String user = incoming.getMessage();
                         //got welcomed? Now you can send messages!
                         if (user.equals(username)) {
                             Platform.runLater(() -> {
@@ -318,10 +363,10 @@ public class ChatGuiClient extends Application {
                             });
                         }
 
-                    } else if (incoming.startsWith("CHAT")) {
-                        int split = incoming.indexOf(" ", 5);
-                        String user = incoming.substring(5, split);
-                        String msg = incoming.substring(split + 1);
+                    } else if (incoming.getHeader().equals("CHAT")) {
+                        Chat came = (Chat)incoming;
+                        String user = came.getUserName();
+                        String msg = incoming.getMessage();
 
                         //int posname = incoming.indexOf(":");
                         //if(!(incoming.substring(5, posname).equals(username))){
@@ -332,30 +377,32 @@ public class ChatGuiClient extends Application {
                             messageArea.appendText(user + ": " + msg + "\n");
                         });
                     }
-                    else if(incoming.startsWith("PCHAT"+username)){
-                        int posname = incoming.indexOf(":");
-                        if(!(incoming.substring(6, posname).equals(username))){
-                            String msg = incoming.substring(6+username.length());
-                            Platform.runLater(() -> {
-                                messageArea.appendText(msg);
-                            });
+                    else if(incoming.getHeader().equals("PCHAT")){
+                        PChat came = (PChat)incoming;
+                        String sender = came.getSender();
+                        String recipient = came.getRecipient();
+                        if(recipient.equals(username)) {
+                            if (!sender.equals(username)) {
+                                String msg = incoming.getMessage();
+                                Platform.runLater(() -> {
+                                    messageArea.appendText(msg);
+                                });
+                            }
                         }
                     }
-                    else if(incoming.startsWith("NAMES")){
-                        int posname = incoming.indexOf(" ");
-                        String names = incoming.substring(posname + 1);
+                    else if(incoming.getHeader().equals("NAMES")){
+                        String allnames = incoming.getMessage();
                         Platform.runLater(() -> {
-                            messageArea.appendText("All Connected Users: " + names + "\n");
+                            messageArea.appendText("All Connected Users: " + allnames + "\n");
                         });
                     }
-                    else if(incoming.startsWith("LEADER")){
-                        int posname = incoming.indexOf(" ");
-                        String leaders = incoming.substring(posname + 1);
+                    else if(incoming.getHeader().equals("LEADER")){
+                        String leaders = incoming.getMessage();
                         Platform.runLater(() -> {
                             messageArea.appendText("Leaderboards: \n" + leaders + "\n");
                         });
                     }
-                    else if(incoming.startsWith("Whoever types")){
+/*                    else if(incoming.getHeader().equals("Whoever types")){
                         String finalIncoming1 = incoming;
                         Platform.runLater(() -> {
                             messageArea.appendText(finalIncoming1 + "\n");
@@ -367,12 +414,14 @@ public class ChatGuiClient extends Application {
                             messageArea.appendText(finalIncoming2 + "\n");
                         });
                     }
-                    else if(incoming.startsWith("COOKIE")){
-                        int posname = incoming.indexOf(" ");
-                        if(!(incoming.substring(7, posname).equals(username))){
-                            String finalIncoming = incoming;
+ */
+                    else if(incoming.getHeader().equals("COOKIE")){
+                        Chat came = (Chat)incoming;
+                        String getting = came.getUserName();
+                        String msg = incoming.getMessage();
+                        if(getting.equals(username)){
                             Platform.runLater(() -> {
-                                messageArea.appendText(finalIncoming.substring(7 + username.length()) + "\n");
+                                messageArea.appendText(msg + "\n");
                             });
                             cookie++;
                             if(cookie<=1) {
@@ -387,11 +436,20 @@ public class ChatGuiClient extends Application {
                             }
                         }
                     }
-                    else if (incoming.startsWith("EXIT")) {
-                        String user = incoming.substring(5);
+                    else if (incoming.getHeader().equals("EXIT")) {
+                        String user = incoming.getMessage();
+                        userNames.remove(user);
                         Platform.runLater(() -> {
                             messageArea.appendText(user + " has left the chatroom.\n");
                         });
+                    }
+                    else{
+                        if(!incoming.getMessage().isEmpty()) {
+                            String msg = incoming.getMessage();
+                            Platform.runLater(() -> {
+                                messageArea.appendText(msg + "\n");
+                            });
+                        }
                     }
                 }
             } catch (UnknownHostException e) {
