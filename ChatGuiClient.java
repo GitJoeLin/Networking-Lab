@@ -334,18 +334,21 @@ public class ChatGuiClient extends Application {
                 appRunning = true;
                 //Ask the gui to show the username dialog and update username
                 //Send to the server
-                Platform.runLater(() -> {
-                    try {
-                        out.writeObject(getName());
-                        out.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
+
 
                 //handle all kinds of incoming messages
                 Message incoming;
                 while (appRunning && (incoming = (Message) in.readObject()) != null) {
+                    if(incoming.getHeader().equals("SUBMITNAME")){
+                        Platform.runLater(() -> {
+                            try {
+                                out.writeObject(getName());
+                                out.flush();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
                     if (incoming.getHeader().equals("WELCOME")) {
                         String user = incoming.getMessage();
                         //got welcomed? Now you can send messages!
