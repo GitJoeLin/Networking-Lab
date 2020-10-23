@@ -52,9 +52,11 @@ public class ChatServer {
 public class ChatServer {
     public static final int PORT = 54321;
     private static final ArrayList<ClientConnectionData> clientList = new ArrayList<>();
-    private static final ArrayList<String> userNames = new ArrayList<>();
+    public static final ArrayList<String> userNames = new ArrayList<>();
 
-
+    public static ArrayList<String> getUserNames(){
+        return userNames;
+    }
 
     public static void main(String[] args) throws Exception{
         try (ServerSocket serverSocket = new ServerSocket(PORT)){

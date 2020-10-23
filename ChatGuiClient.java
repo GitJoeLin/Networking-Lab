@@ -79,8 +79,6 @@ public class ChatGuiClient extends Application {
     private Button list_namesButton;
     private Button cookieButton;
 
-    ArrayList<String> userNames = new ArrayList<>();
-
     private ServerInfo serverInfo;
     //volatile keyword makes individual reads/writes of the variable atomic
     // Since username is accessed from multiple threads, atomicity is important
@@ -287,12 +285,9 @@ public class ChatGuiClient extends Application {
         nameDialog.setHeaderText("Please enter your username.");
         nameDialog.setContentText("Name: ");
 
-        while(username.equals("")) {
+/*        while(username.equals("")) {
             Optional<String> name = nameDialog.showAndWait();
-            if(userNames.contains(name.get())){
-                nameDialog.setHeaderText("You must enter a unique name: ");
-            }
-            else if (name.get().isEmpty() || name.get().trim().equals(""))
+            if (name.get().isEmpty() || name.get().trim().equals(""))
                 nameDialog.setHeaderText("You must enter a nonempty name: ");
             else if (name.get().trim().contains(" "))
                 nameDialog.setHeaderText("The name must have no spaces: ");
@@ -315,8 +310,10 @@ public class ChatGuiClient extends Application {
             else
                 username = name.get().trim();
         }
-        userNames.add(username);
-        return username;
+
+*/
+        Optional<String> name = nameDialog.showAndWait();
+        return name.get();
     }
 
     class ServerListener implements Runnable {
@@ -441,7 +438,6 @@ public class ChatGuiClient extends Application {
                     }
                     else if (incoming.getHeader().equals("EXIT")) {
                         String user = incoming.getMessage();
-                        userNames.remove(user);
                         Platform.runLater(() -> {
                             messageArea.appendText(user + " has left the chatroom.\n");
                         });
