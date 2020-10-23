@@ -37,7 +37,7 @@ public class ChatClient {
                 out.flush();
                 line = userInput.nextLine().trim();
             }
-            out.writeObject("QUIT");
+            out.writeObject("EXIT");
             out.flush();
             out.close();
             userInput.close();
