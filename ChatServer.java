@@ -51,8 +51,8 @@ public class ChatServer {
 
 public class ChatServer {
     public static final int PORT = 54321;
-    private static ArrayList<ClientConnectionData> clientList = new ArrayList<>();
-    private static ArrayList<String> userNames = new ArrayList<>();
+    private static final ArrayList<ClientConnectionData> clientList = new ArrayList<>();
+    private static final ArrayList<String> userNames = new ArrayList<>();
 
 
 

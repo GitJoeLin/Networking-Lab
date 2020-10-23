@@ -385,7 +385,7 @@ public class ChatGuiClient extends Application {
                             if (!sender.equals(username)) {
                                 String msg = incoming.getMessage();
                                 Platform.runLater(() -> {
-                                    messageArea.appendText(msg);
+                                    messageArea.appendText(sender + "(private): " + msg + "\n");
                                 });
                             }
                         }
