@@ -279,7 +279,7 @@ public class ChatGuiClient extends Application {
         return getServerDialog.showAndWait();
     }
 
-    private String getName(){
+    private String getName() {
         TextInputDialog nameDialog = new TextInputDialog();
         nameDialog.setTitle("Enter Chat Name");
         nameDialog.setHeaderText("Please enter your username.");
@@ -287,35 +287,35 @@ public class ChatGuiClient extends Application {
 
 /*        while(username.equals("")) {
             Optional<String> name = nameDialog.showAndWait();
-            if (name.get().isEmpty() || name.get().trim().equals(""))
-                nameDialog.setHeaderText("You must enter a nonempty name: ");
-            else if (name.get().trim().contains(" "))
-                nameDialog.setHeaderText("The name must have no spaces: ");
-            else if (name.get().trim().contains("!") || name.get().trim().contains("@")
-                    || name.get().trim().contains("#") || name.get().trim().contains("$")
-                    || name.get().trim().contains("%") || name.get().trim().contains("^")
-                    || name.get().trim().contains("&") || name.get().trim().contains("*")
-                    || name.get().trim().contains("(") || name.get().trim().contains(")")
-                    || name.get().trim().contains("~") || name.get().trim().contains("`")
-                    || name.get().trim().contains("-") || name.get().trim().contains("_")
-                    || name.get().trim().contains("+") || name.get().trim().contains("=")
-                    || name.get().trim().contains("[") || name.get().trim().contains("]")
-                    || name.get().trim().contains("{") || name.get().trim().contains("}")
-                    || name.get().trim().contains("\\") || name.get().trim().contains("|")
-                    || name.get().trim().contains(",") || name.get().trim().contains(".")
-                    || name.get().trim().contains("<") || name.get().trim().contains(">")
-                    || name.get().trim().contains("/") || name.get().trim().contains("?")){
-                nameDialog.setHeaderText("The name must have no special characters: ");
-            }
             else
                 username = name.get().trim();
         }
 
 */
         Optional<String> name = nameDialog.showAndWait();
-        return name.get();
+        if (name.get().isEmpty() || name.get().trim().equals(""))
+            nameDialog.setHeaderText("You must enter a nonempty name: ");
+        else if (name.get().trim().contains(" "))
+            nameDialog.setHeaderText("The name must have no spaces: ");
+        else if (name.get().trim().contains("!") || name.get().trim().contains("@")
+                || name.get().trim().contains("#") || name.get().trim().contains("$")
+                || name.get().trim().contains("%") || name.get().trim().contains("^")
+                || name.get().trim().contains("&") || name.get().trim().contains("*")
+                || name.get().trim().contains("(") || name.get().trim().contains(")")
+                || name.get().trim().contains("~") || name.get().trim().contains("`")
+                || name.get().trim().contains("-") || name.get().trim().contains("_")
+                || name.get().trim().contains("+") || name.get().trim().contains("=")
+                || name.get().trim().contains("[") || name.get().trim().contains("]")
+                || name.get().trim().contains("{") || name.get().trim().contains("}")
+                || name.get().trim().contains("\\") || name.get().trim().contains("|")
+                || name.get().trim().contains(",") || name.get().trim().contains(".")
+                || name.get().trim().contains("<") || name.get().trim().contains(">")
+                || name.get().trim().contains("/") || name.get().trim().contains("?")) {
+            nameDialog.setHeaderText("The name must have no special characters: ");
+        }
+        username = name.get().trim();
+        return username;
     }
-
     class ServerListener implements Runnable {
 
         int cookie = 0;
@@ -346,7 +346,7 @@ public class ChatGuiClient extends Application {
                             }
                         });
                     }
-                    if (incoming.getHeader().equals("WELCOME")) {
+                    else if (incoming.getHeader().equals("WELCOME")) {
                         String user = incoming.getMessage();
                         //got welcomed? Now you can send messages!
                         if (user.equals(username)) {
