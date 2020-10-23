@@ -292,7 +292,7 @@ public class ChatGuiClient extends Application {
             if(userNames.contains(name.get())){
                 nameDialog.setHeaderText("You must enter a unique name: ");
             }
-            else if (name.isEmpty() || name.get().trim().equals(""))
+            else if (name.get().isEmpty() || name.get().trim().equals(""))
                 nameDialog.setHeaderText("You must enter a nonempty name: ");
             else if (name.get().trim().contains(" "))
                 nameDialog.setHeaderText("The name must have no spaces: ");
